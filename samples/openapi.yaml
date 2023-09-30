@@ -33,16 +33,29 @@ paths:
             examples:
               item:
                 value: {
-                  id: 0,
                   title: string,
                   description: string,
-                  category: enum,
-                  dateCreated: date auto create,
-                  dueDate: set date,
-                  itemColor: enum,
-                  isImportant: boolean,
-                  isComplete: boolean
+                  category: 0,
+                  dueDate: "2023-09-30",
+                  itemColor: 0,
+                  isImportant: false,
+                  isComplited: false
                 }
+      parameters:
+        - name: title
+          in: query
+          description: Set the title of the item
+          schema:
+            type: string
+            format: string
+          required: true
+        - name: description
+          in: query
+          description: Provide more details for new item
+          schema:
+            type: string
+            format: string
+          required: true
       responses:
         '200':
           description: Successful operation
@@ -54,6 +67,25 @@ paths:
           description: Request forbidden
         '405':
           description: Invalid input
+        '500':
+          description: Internal Server Error
+  /todo/items:
+    get:
+      tags: 
+        - Todo
+      summary: Get todo items
+      description: Return all items
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/todo/items'
+        '403':
+          description: Access forbidden
         '500':
           description: Internal Server Error
   /todo/{id}:
@@ -136,62 +168,95 @@ paths:
 components:
   schemas:
     todo:
+      type: object
       properties:
         id:
           type: integer
-          format: int64
-          example: 2
+          format: int32
         title:
           type: string
           format: string
-          example: Wash your car
         description:
           type: string
           format: string
-          example: Wash your car after work today
         category:
-          $ref: '#/components/schemas/category'
+          type: integer
+          format: int32
         dateCreated:
           type: string
           format: date
-          example: 'Tue, 19 Sep 2023 18:12:27 GMT'
         dueDate:
           type: string
           format: date
-          example: 'Tue, 19 Sep 2023 18:12:27 GMT'
         itemColor:
-          $ref: '#/components/schemas/itemColor'
+          type: integer
+          format: int32
         isImportant:
           type: boolean
-          format: boolean
-          example: false
+          format: boolea
         isComplited:
           type: boolean
           format: boolean
-          example: false
-    category:
-      properties:
-        id:
-          type: integer
-          format: int32
-          example: 1
-        title:
-          type: string
-          format: string
-          example: Vehicle
-    itemColor:
-      properties:
-        id:
-          type: integer
-          format: int32
-          example: 1
-        name:
-          type: string
-          format: string
-          example: White
-
-
-
-
-        
-      
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int32
+          title:
+            type: string
+            format: string
+          description:
+            type: string
+            format: string
+          category:
+            type: integer
+            format: int32
+          dateCreated:
+            type: string
+            format: date
+          dueDate:
+            type: string
+            format: date
+          itemColor:
+            type: integer
+            format: int32
+          isImportant:
+            type: boolean
+            format: boolean
+          isComplited:
+            type: boolean
+            format: boolean
+        example:
+          - id: 1
+            title: lorem ipsum
+            description: lorem ipsum dolor sit amet
+            category: 4
+            dateCreated: 'Tue, 25 Sep 2023 18:12:27 GMT'
+            dueDate: 'Tue, 25 Sep 2023 18:12:27 GMT'
+            itemColor: 2
+            isImportant: false
+            isComplete: false
+          - id: 2
+            title: lorem ipsum2
+            description: lorem ipsum dolor sit amet
+            category: 2
+            dateCreated: 'Tue, 25 Sep 2023 18:12:27 GMT'
+            dueDate: 'Tue, 25 Sep 2023 18:12:27 GMT'
+            itemColor: 4
+            isImportant: false
+            isComplete: false
+          - id: 3
+            title: lorem ipsum3
+            description: lorem ipsum dolor sit amet
+            category: 0
+            dateCreated: 'Tue, 25 Sep 2023 18:12:27 GMT'
+            dueDate: 'Tue, 25 Sep 2023 18:12:27 GMT'
+            itemColor: 0
+            isImportant: true
+            isComplete: false
+      required:
+        - id
+        - title
+        - description
+        - dateCreated
