@@ -111,8 +111,6 @@ paths:
                 $ref: '#/components/schemas/todo'
         '400':
           description: Invalid ID
-        '403':
-          description: Access forbidden
         '500':
           description: Internal Server Error
     put:
