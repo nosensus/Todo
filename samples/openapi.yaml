@@ -29,7 +29,41 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/todo"
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int32
+                  description: Auto generate by code we don't need set it.
+                title:
+                  type: string
+                  format: string
+                  description: Title must be unique
+                description:
+                  type: string
+                  format: string
+                category:
+                  type: integer
+                  format: enum
+                dateCreated:
+                  type: string
+                  format: date
+                  description: Date automatically gets from current date we don't need set it.
+                dueDate:
+                  type: string
+                  format: date
+                itemColor:
+                  type: integer
+                  format: enum
+                isImportant:
+                  type: boolean
+                isComplete:
+                  type: boolean
+              required:
+                - id
+                - title
+                - description
+                - dateCreated
             examples:
               item:
                 value: {
@@ -63,8 +97,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/todo'
-        '403':
-          description: Request forbidden
         '405':
           description: Invalid input
         '500':
@@ -74,7 +106,7 @@ paths:
       tags: 
         - Todo
       summary: Get todo items
-      description: Return all items
+      description: Return all items    
       responses:
         '200':
           description: Successful operation
@@ -84,14 +116,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/todo/items'
-        '403':
-          description: Access forbidden
         '500':
           description: Internal Server Error
   /todo/{id}:
     get:
       tags:
-        - Todo
+        - Todo Id
       summary: Find item by ID
       description: Return item by ID from database TodoItem
       parameters:
@@ -115,9 +145,49 @@ paths:
           description: Internal Server Error
     put:
       tags:
-        - Todo
+        - Todo Id
       summary: Get Item by ID
       description: Modify item's fields
+      requestBody:
+        description: Item model to modify any field
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int32
+                  description: auto generate by code we don't need set it.
+                title:
+                  type: string
+                  format: string
+                description:
+                  type: string
+                  format: string
+                category:
+                  type: integer
+                  format: enum
+                dateCreated:
+                  type: string
+                  format: date
+                  description: 
+                    After edit dateCreated should change to dateModify but this date the same as dateCreated, just change title.
+                dueDate:
+                  type: string
+                  format: date
+                itemColor:
+                  type: integer
+                  format: enum
+                isImportant:
+                  type: boolean
+                isComplete:
+                  type: boolean
+              required:
+                - id
+                - title
+                - description
+                - dateCreated
       parameters:
         - name: id
           in: path
@@ -125,12 +195,18 @@ paths:
           schema:
             type: integer
             format: int32
-      requestBody:
-        description: Item model to modify any field
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/todo'
+        - name: title
+          in: query
+          required: true
+          schema:
+            type: string
+            format: string
+        - name: description
+          in: query
+          required: true
+          schema:
+            type: string
+            format: string
       responses:
         '200':
           description: Successful operation
@@ -138,15 +214,11 @@ paths:
           description: Invalid ID
         '404':
           description: Todo item Not Found
-        '405':
-          description: Validation exception
-        '403':
-          description: Access forbidden
         '500':
           description: Internal Server Error
     delete:
       tags:
-        - Todo
+        - Todo Id
       summary: Delete Item by ID
       description: Delete Item from Database by ID
       parameters:
@@ -161,6 +233,121 @@ paths:
           description: Successful operation
         '400':
           description: Invalid ID
+        '404':
+          description: Item Not Found
+  /todo/{title}:
+    get:
+      tags:
+        - Todo Title
+      summary: Find item by Title
+      description: Return item by title
+      parameters:
+        - name: title
+          in: path
+          description: Set title to get item
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/todo'
+        '400':
+          description: Invalid title name or it's empty
+        '500':
+          description: Internal Server Error
+    put:
+      tags:
+        - Todo Title
+      summary: Get Item by Title
+      description: Modify item's fields
+      requestBody:
+        description: Item model to modify any field
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int32
+                  description: auto generate by code we don't need set it.
+                title:
+                  type: string
+                  format: string
+                description:
+                  type: string
+                  format: string
+                category:
+                  type: integer
+                  format: enum
+                dateCreated:
+                  type: string
+                  format: date
+                  description: 
+                    After edit dateCreated should change to dateModify but this date the same as dateCreated, just change title.
+                dueDate:
+                  type: string
+                  format: date
+                itemColor:
+                  type: integer
+                  format: enum
+                isImportant:
+                  type: boolean
+                isComplete:
+                  type: boolean
+              required:
+                - id
+                - title
+                - description
+                - dateCreated
+      parameters:
+        - name: title
+          in: path
+          required: true
+          schema:
+            type: string
+            format: string
+        - name: description
+          in: query
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/todo'
+        '400':
+          description: Invalid Title
+        '404':
+          description: Todo item Not Found
+        '500':
+          description: Internal Server Error
+    delete:
+      tags:
+        - Todo Title
+      summary: Delete Item by Title
+      description: Delete Item from Database by Title
+      parameters:
+        - name: title
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid Title or it's empty
         '404':
           description: Item Not Found
 components:
@@ -258,3 +445,4 @@ components:
         - title
         - description
         - dateCreated
+
