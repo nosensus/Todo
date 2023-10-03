@@ -1,0 +1,448 @@
+openapi: 3.0.3
+info:
+  title: Todo list API
+  description: Write YAML file with details of todo list API
+  termsOfService: http://localhost/terms
+  contact:
+    name: Aleksandr
+    url: http://localhost
+    email: contact@email.com
+  license:
+    name: .net core
+    url: http://localhost
+  version: 1.0.0
+servers:
+  - url: http://localhost/api
+    description: Development server
+    variables:
+      port:
+        default: '8000'
+paths:
+  /todo:
+    post:
+      tags: 
+        - Todo
+      summary: Add new Item
+      requestBody:
+        description: 
+          'Method to add new Item to the database TodoItems. Category and ItemColor are enum.'
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int32
+                  description: Auto generate by code we don't need set it.
+                title:
+                  type: string
+                  format: string
+                  description: Title must be unique
+                description:
+                  type: string
+                  format: string
+                category:
+                  type: integer
+                  format: enum
+                dateCreated:
+                  type: string
+                  format: date
+                  description: Date automatically gets from current date we don't need set it.
+                dueDate:
+                  type: string
+                  format: date
+                itemColor:
+                  type: integer
+                  format: enum
+                isImportant:
+                  type: boolean
+                isComplete:
+                  type: boolean
+              required:
+                - id
+                - title
+                - description
+                - dateCreated
+            examples:
+              item:
+                value: {
+                  title: string,
+                  description: string,
+                  category: 0,
+                  dueDate: "2023-09-30",
+                  itemColor: 0,
+                  isImportant: false,
+                  isComplited: false
+                }
+      parameters:
+        - name: title
+          in: query
+          description: Set the title of the item
+          schema:
+            type: string
+            format: string
+          required: true
+        - name: description
+          in: query
+          description: Provide more details for new item
+          schema:
+            type: string
+            format: string
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/todo'
+        '405':
+          description: Invalid input
+        '500':
+          description: Internal Server Error
+  /todo/items:
+    get:
+      tags: 
+        - Todo
+      summary: Get todo items
+      description: Return all items    
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/todo/items'
+        '500':
+          description: Internal Server Error
+  /todo/{id}:
+    get:
+      tags:
+        - Todo Id
+      summary: Find item by ID
+      description: Return item by ID from database TodoItem
+      parameters:
+        - name: id
+          in: path
+          description: Set ID to get item
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/todo'
+        '400':
+          description: Invalid ID
+        '500':
+          description: Internal Server Error
+    put:
+      tags:
+        - Todo Id
+      summary: Get Item by ID
+      description: Modify item's fields
+      requestBody:
+        description: Item model to modify any field
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int32
+                  description: auto generate by code we don't need set it.
+                title:
+                  type: string
+                  format: string
+                description:
+                  type: string
+                  format: string
+                category:
+                  type: integer
+                  format: enum
+                dateCreated:
+                  type: string
+                  format: date
+                  description: 
+                    After edit dateCreated should change to dateModify but this date the same as dateCreated, just change title.
+                dueDate:
+                  type: string
+                  format: date
+                itemColor:
+                  type: integer
+                  format: enum
+                isImportant:
+                  type: boolean
+                isComplete:
+                  type: boolean
+              required:
+                - id
+                - title
+                - description
+                - dateCreated
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: title
+          in: query
+          required: true
+          schema:
+            type: string
+            format: string
+        - name: description
+          in: query
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID
+        '404':
+          description: Todo item Not Found
+        '500':
+          description: Internal Server Error
+    delete:
+      tags:
+        - Todo Id
+      summary: Delete Item by ID
+      description: Delete Item from Database by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID
+        '404':
+          description: Item Not Found
+  /todo/{title}:
+    get:
+      tags:
+        - Todo Title
+      summary: Find item by Title
+      description: Return item by title
+      parameters:
+        - name: title
+          in: path
+          description: Set title to get item
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/todo'
+        '400':
+          description: Invalid title name or it's empty
+        '500':
+          description: Internal Server Error
+    put:
+      tags:
+        - Todo Title
+      summary: Get Item by Title
+      description: Modify item's fields
+      requestBody:
+        description: Item model to modify any field
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int32
+                  description: auto generate by code we don't need set it.
+                title:
+                  type: string
+                  format: string
+                description:
+                  type: string
+                  format: string
+                category:
+                  type: integer
+                  format: enum
+                dateCreated:
+                  type: string
+                  format: date
+                  description: 
+                    After edit dateCreated should change to dateModify but this date the same as dateCreated, just change title.
+                dueDate:
+                  type: string
+                  format: date
+                itemColor:
+                  type: integer
+                  format: enum
+                isImportant:
+                  type: boolean
+                isComplete:
+                  type: boolean
+              required:
+                - id
+                - title
+                - description
+                - dateCreated
+      parameters:
+        - name: title
+          in: path
+          required: true
+          schema:
+            type: string
+            format: string
+        - name: description
+          in: query
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/todo'
+        '400':
+          description: Invalid Title
+        '404':
+          description: Todo item Not Found
+        '500':
+          description: Internal Server Error
+    delete:
+      tags:
+        - Todo Title
+      summary: Delete Item by Title
+      description: Delete Item from Database by Title
+      parameters:
+        - name: title
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid Title or it's empty
+        '404':
+          description: Item Not Found
+components:
+  schemas:
+    todo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        title:
+          type: string
+          format: string
+        description:
+          type: string
+          format: string
+        category:
+          type: integer
+          format: int32
+        dateCreated:
+          type: string
+          format: date
+        dueDate:
+          type: string
+          format: date
+        itemColor:
+          type: integer
+          format: int32
+        isImportant:
+          type: boolean
+          format: boolea
+        isComplited:
+          type: boolean
+          format: boolean
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int32
+          title:
+            type: string
+            format: string
+          description:
+            type: string
+            format: string
+          category:
+            type: integer
+            format: int32
+          dateCreated:
+            type: string
+            format: date
+          dueDate:
+            type: string
+            format: date
+          itemColor:
+            type: integer
+            format: int32
+          isImportant:
+            type: boolean
+            format: boolean
+          isComplited:
+            type: boolean
+            format: boolean
+        example:
+          - id: 1
+            title: lorem ipsum
+            description: lorem ipsum dolor sit amet
+            category: 4
+            dateCreated: 'Tue, 25 Sep 2023 18:12:27 GMT'
+            dueDate: 'Tue, 25 Sep 2023 18:12:27 GMT'
+            itemColor: 2
+            isImportant: false
+            isComplete: false
+          - id: 2
+            title: lorem ipsum2
+            description: lorem ipsum dolor sit amet
+            category: 2
+            dateCreated: 'Tue, 25 Sep 2023 18:12:27 GMT'
+            dueDate: 'Tue, 25 Sep 2023 18:12:27 GMT'
+            itemColor: 4
+            isImportant: false
+            isComplete: false
+          - id: 3
+            title: lorem ipsum3
+            description: lorem ipsum dolor sit amet
+            category: 0
+            dateCreated: 'Tue, 25 Sep 2023 18:12:27 GMT'
+            dueDate: 'Tue, 25 Sep 2023 18:12:27 GMT'
+            itemColor: 0
+            isImportant: true
+            isComplete: false
+      required:
+        - id
+        - title
+        - description
+        - dateCreated
+
