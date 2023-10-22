@@ -97,7 +97,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/todo'
-        '405':
+        '400':
           description: Invalid input
         '500':
           description: Internal Server Error
@@ -146,7 +146,7 @@ paths:
     put:
       tags:
         - Todo Id
-      summary: Get Item by ID
+      summary: Update Item by ID
       description: Modify item's fields
       requestBody:
         description: Item model to modify any field
@@ -263,7 +263,7 @@ paths:
     put:
       tags:
         - Todo Title
-      summary: Get Item by Title
+      summary: Update Item by Title
       description: Modify item's fields
       requestBody:
         description: Item model to modify any field
