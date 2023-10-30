@@ -4,22 +4,20 @@ using Microsoft.AspNetCore.Mvc;
 using Todo_webapi.Data;
 using Todo_webapi.Models;
 
-namespace Todo_webapi.Controllers; 
+namespace Todo_webapi.Controllers;
 
 [ApiController]
 [Route("todo")]
-[EnableCors("AllowAllHeaders")]
 public class TodoApiController : ControllerBase {
 	/// <summary>
 	/// Add new item
 	/// </summary>
 	[HttpPost(Name = "Add new item")]
-	[Produces("application/json")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public ActionResult<Todo> Create(
-		[FromBody] Todo todo, 
+		[FromBody] Todo todo,
 		[FromQuery, Required] string title,
 		[FromQuery, Required] string description) {
 		if (todo is null) {
@@ -31,12 +29,11 @@ public class TodoApiController : ControllerBase {
 
 		return Ok(todo);
 	}
-	
+
 	/// <summary>
 	/// Get todo items
 	/// </summary>
 	[HttpGet(Name = "Get todo items")]
-	[Produces("application/json")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public ActionResult<IEnumerable<Todo>> ListItems() {
@@ -47,7 +44,6 @@ public class TodoApiController : ControllerBase {
 	/// Find item by ID
 	/// </summary>
 	[HttpGet("{id:int}", Name = "Find item by ID")]
-	[Produces("application/json")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -55,20 +51,19 @@ public class TodoApiController : ControllerBase {
 		if (id == 0) {
 			return BadRequest();
 		}
-		
+
 		var item = FakeDb.TodoItems.FirstOrDefault(item => item.Id == id);
 		if (item == null) {
 			return NotFound();
 		}
-		
+
 		return Ok(item);
 	}
 
 	/// <summary>
 	/// Find item by Title
-	/// </summary>v
+	/// </summary>
 	[HttpGet("{title}", Name = "Find item by Title")]
-	[Produces("application/json")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -89,14 +84,13 @@ public class TodoApiController : ControllerBase {
 	/// Update Item by ID
 	/// </summary>
 	[HttpPut("{id:int}", Name = "Update Item by ID")]
-	[Produces("application/json")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public ActionResult<Todo> UpdateItem(
-		int id, 
+		int id,
 		Todo? todoItem,
 		[FromQuery, Required] string title,
 		[FromQuery, Required] string description) {
@@ -110,19 +104,18 @@ public class TodoApiController : ControllerBase {
 
 		return NoContent();
 	}
-	
+
 	/// <summary>
 	/// Update Item by Title
-	/// </summary>v
+	/// </summary>
 	[HttpPut("{title}", Name = "Update Item by Title")]
-	[Produces("application/json")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public ActionResult<Todo> UpdateItem(
-		string title, 
+		string title,
 		Todo? todoItem,
 		[FromQuery, Required] string description) {
 		if (todoItem == null && title != todoItem.Title) {
@@ -140,7 +133,6 @@ public class TodoApiController : ControllerBase {
 	/// Delete item by ID
 	/// </summary>
 	[HttpDelete("{id:int}", Name = "Delete item by ID")]
-	[Produces("application/json")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -156,15 +148,14 @@ public class TodoApiController : ControllerBase {
 			return NotFound();
 		}
 		FakeDb.TodoItems.Remove(item);
-		
+
 		return NoContent();
 	}
-	
+
 	/// <summary>
 	/// Delete item by Title
 	/// </summary>
 	[HttpDelete("{title}", Name = "Delete item by Title")]
-	[Produces("application/json")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -180,7 +171,7 @@ public class TodoApiController : ControllerBase {
 			return NotFound();
 		}
 		FakeDb.TodoItems.Remove(item);
-		
+
 		return NoContent();
 	}
 }
