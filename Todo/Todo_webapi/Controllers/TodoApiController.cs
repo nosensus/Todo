@@ -15,19 +15,21 @@ public class TodoApiController : ControllerBase {
 	[HttpPost(Name = "Add new item")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-	public ActionResult<Todo> Create(
-		[FromBody] Todo todo,
-		[FromQuery, Required] string title,
-		[FromQuery, Required] string description) {
-		if (todo is null) {
-			return BadRequest();
+	public ActionResult<Todo> Create([FromBody] AddTodoResponse addTodoResponse) {
+		if (!ModelState.IsValid) {
+			return BadRequest(ModelState);
 		}
 
-		todo.Id = FakeDb.TodoItems.OrderByDescending(item => item.Id).FirstOrDefault().Id + 1;
-		FakeDb.TodoItems.Add(todo);
-
-		return Ok(todo);
+		DateTime dateNow = DateTime.Now;
+		Todo newTodo = new() {
+			Id = Guid.NewGuid(),
+			Title = addTodoResponse.Title,
+			Description = addTodoResponse.Description,
+			CreatedDate = dateNow,
+			UpdatedDate = dateNow
+		};
+		FakeDb.todoItems.Add(newTodo);
+		return Ok(newTodo);
 	}
 
 	/// <summary>
@@ -35,44 +37,23 @@ public class TodoApiController : ControllerBase {
 	/// </summary>
 	[HttpGet(Name = "Get todo items")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public ActionResult<IEnumerable<Todo>> ListItems() {
-		return Ok(FakeDb.TodoItems);
+		return Ok(FakeDb.todoItems);
 	}
 
 	/// <summary>
 	/// Find item by ID
 	/// </summary>
-	[HttpGet("{id:int}", Name = "Find item by ID")]
+	[HttpGet("{id:Guid}", Name = "Find item by ID")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-	public ActionResult<Todo> GetItem(int id) {
-		if (id == 0) {
-			return BadRequest();
+	public ActionResult<Todo> GetItem(Guid id) {
+		Guid Id;
+		if (!Guid.TryParse(id.ToString(), out Id)) {
+			return BadRequest("Id is empty or not correct");
 		}
 
-		var item = FakeDb.TodoItems.FirstOrDefault(item => item.Id == id);
-		if (item == null) {
-			return NotFound();
-		}
-
-		return Ok(item);
-	}
-
-	/// <summary>
-	/// Find item by Title
-	/// </summary>
-	[HttpGet("{title}", Name = "Find item by Title")]
-	[ProducesResponseType(StatusCodes.Status200OK)]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-	public ActionResult<Todo> GetItem(string title) {
-		if (title == "") {
-			return BadRequest();
-		}
-
-		var item = FakeDb.TodoItems.FirstOrDefault(item => item.Title == title);
+		Todo item = FakeDb.todoItems.FirstOrDefault(item => item.Id == Id);
 		if (item == null) {
 			return NotFound();
 		}
@@ -83,95 +64,61 @@ public class TodoApiController : ControllerBase {
 	/// <summary>
 	/// Update Item by ID
 	/// </summary>
-	[HttpPut("{id:int}", Name = "Update Item by ID")]
+	[HttpPut("{id:Guid}", Name = "Update Item by ID")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public ActionResult<Todo> UpdateItem(
-		int id,
-		Todo? todoItem,
-		[FromQuery, Required] string title,
-		[FromQuery, Required] string description) {
-		if (todoItem == null && id != todoItem.Id) {
-			return BadRequest(todoItem);
+		[FromBody] Todo todo,
+		[FromQuery, Required] Guid id) {
+		if (!ModelState.IsValid) {
+			return BadRequest();
 		}
 
-		var item = FakeDb.TodoItems.FirstOrDefault(item => item.Id == id);
-		item.Title = todoItem.Title;
-		item.Description = todoItem.Description;
-
-		return NoContent();
-	}
-
-	/// <summary>
-	/// Update Item by Title
-	/// </summary>
-	[HttpPut("{title}", Name = "Update Item by Title")]
-	[ProducesResponseType(StatusCodes.Status200OK)]
-	[ProducesResponseType(StatusCodes.Status204NoContent)]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-	public ActionResult<Todo> UpdateItem(
-		string title,
-		Todo? todoItem,
-		[FromQuery, Required] string description) {
-		if (todoItem == null && title != todoItem.Title) {
-			return BadRequest(todoItem);
+		Guid Id;
+		if (!Guid.TryParse(id.ToString(), out Id)) {
+			return BadRequest();
 		}
 
-		var item = FakeDb.TodoItems.FirstOrDefault(item => item.Title == title);
-		item.Title = todoItem.Title;
-		item.Description = todoItem.Description;
+		if (todo.Id != Id) {
+			return BadRequest("id from request Body is not equal Id from URL");
+		}
 
-		return NoContent();
+		Todo item = FakeDb.todoItems.FirstOrDefault(item => item.Id == Id);
+		if (item is null) {
+			return NotFound();
+		}
+
+		item.Title = todo.Title;
+		item.Description = todo.Description;
+		item.Category = todo.Category;
+		item.UpdatedDate = DateTime.Now;
+		item.DueDate = todo.DueDate;
+		item.CardColor = todo.CardColor;
+		item.IsImportant = todo.IsImportant;
+		item.IsComplete = todo.IsComplete;
+		return Ok(item);
 	}
 
 	/// <summary>
 	/// Delete item by ID
 	/// </summary>
-	[HttpDelete("{id:int}", Name = "Delete item by ID")]
+	[HttpDelete("{id:Guid}", Name = "Delete item by ID")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-	public ActionResult<Todo> DeleteItem(int id) {
-		if (id == 0) {
+	public ActionResult<Todo> DeleteItem(Guid id) {
+		Guid Id;
+		if (!Guid.TryParse(id.ToString(), out Id)) {
 			return BadRequest();
 		}
 
-		var item = FakeDb.TodoItems.FirstOrDefault(item => item.Id == id);
-		if (item == null) {
+		Todo item = FakeDb.todoItems.FirstOrDefault(item => item.Id == Id);
+		if (item is null) {
 			return NotFound();
 		}
-		FakeDb.TodoItems.Remove(item);
 
-		return NoContent();
-	}
-
-	/// <summary>
-	/// Delete item by Title
-	/// </summary>
-	[HttpDelete("{title}", Name = "Delete item by Title")]
-	[ProducesResponseType(StatusCodes.Status200OK)]
-	[ProducesResponseType(StatusCodes.Status204NoContent)]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-	public ActionResult<Todo> DeleteItem(string title) {
-		if (title == "") {
-			return BadRequest();
-		}
-
-		var item = FakeDb.TodoItems.FirstOrDefault(item => item.Title == title);
-		if (item == null) {
-			return NotFound();
-		}
-		FakeDb.TodoItems.Remove(item);
-
-		return NoContent();
+		FakeDb.todoItems.Remove(item);
+		return Ok(item);
 	}
 }
