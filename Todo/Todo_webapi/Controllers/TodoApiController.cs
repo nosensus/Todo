@@ -119,6 +119,6 @@ public class TodoApiController : ControllerBase {
 		}
 
 		FakeDb.todoItems.Remove(item);
-		return Ok(item);
+		return Ok();
 	}
 }
