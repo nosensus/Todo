@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Todo_webapi.Data;
-using Todo_webapi.Models;
+using Todo.WebApi.Data;
+using Todo.WebApi.Models;
 
-namespace Todo_webapi.Controllers;
+namespace Todo.WebApi.Controllers;
 
 [ApiController]
 [Route("todo")]
@@ -15,13 +15,13 @@ public class TodoApiController : ControllerBase {
 	[HttpPost(Name = "Add new item")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	public ActionResult<Todo> Create([FromBody] AddTodoResponse addTodoResponse) {
+	public ActionResult<TodoItem> Create([FromBody] AddTodoResponse addTodoResponse) {
 		if (!ModelState.IsValid) {
 			return BadRequest(ModelState);
 		}
 
 		DateTime dateNow = DateTime.Now;
-		Todo newTodo = new() {
+		TodoItem newTodo = new() {
 			Id = Guid.NewGuid(),
 			Title = addTodoResponse.Title,
 			Description = addTodoResponse.Description,
@@ -37,7 +37,7 @@ public class TodoApiController : ControllerBase {
 	/// </summary>
 	[HttpGet(Name = "Get todo items")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	public ActionResult<IEnumerable<Todo>> ListItems() {
+	public ActionResult<IEnumerable<TodoItem>> ListItems() {
 		return Ok(FakeDb.todoItems);
 	}
 
@@ -47,13 +47,13 @@ public class TodoApiController : ControllerBase {
 	[HttpGet("{id:Guid}", Name = "Find item by ID")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	public ActionResult<Todo> GetItem(Guid id) {
+	public ActionResult<TodoItem> GetItem(Guid id) {
 		Guid Id;
 		if (!Guid.TryParse(id.ToString(), out Id)) {
 			return BadRequest("Id is empty or not correct");
 		}
 
-		Todo item = FakeDb.todoItems.FirstOrDefault(item => item.Id == Id);
+		TodoItem item = FakeDb.todoItems.FirstOrDefault(item => item.Id == Id);
 		if (item == null) {
 			return NotFound();
 		}
@@ -68,8 +68,8 @@ public class TodoApiController : ControllerBase {
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public ActionResult<Todo> UpdateItem(
-		[FromBody] Todo todo,
+	public ActionResult<TodoItem> UpdateItem(
+		[FromBody] TodoItem todo,
 		[FromQuery, Required] Guid id) {
 		if (!ModelState.IsValid) {
 			return BadRequest();
@@ -84,7 +84,7 @@ public class TodoApiController : ControllerBase {
 			return BadRequest("id from request Body is not equal Id from URL");
 		}
 
-		Todo item = FakeDb.todoItems.FirstOrDefault(item => item.Id == Id);
+		TodoItem item = FakeDb.todoItems.FirstOrDefault(item => item.Id == Id);
 		if (item is null) {
 			return NotFound();
 		}
@@ -107,13 +107,13 @@ public class TodoApiController : ControllerBase {
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public ActionResult<Todo> DeleteItem(Guid id) {
+	public ActionResult<TodoItem> DeleteItem(Guid id) {
 		Guid Id;
 		if (!Guid.TryParse(id.ToString(), out Id)) {
 			return BadRequest();
 		}
 
-		Todo item = FakeDb.todoItems.FirstOrDefault(item => item.Id == Id);
+		TodoItem item = FakeDb.todoItems.FirstOrDefault(item => item.Id == Id);
 		if (item is null) {
 			return NotFound();
 		}

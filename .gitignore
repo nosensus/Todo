@@ -1,4 +1,4 @@
 /Todo/.vs
-/Todo/Todo_webapi/bin
-/Todo/Todo_webapi/obj
+/Todo/*/bin
+/Todo/*/obj
 /Todo/.idea

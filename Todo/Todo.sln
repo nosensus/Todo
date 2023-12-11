@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 25.0.1706.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo_webapi", "Todo_webapi\Todo_webapi.csproj", "{19F83345-F928-4390-8A99-4B7C6443150C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo.WebApi", "Todo.WebApi\Todo.WebApi.csproj", "{19F83345-F928-4390-8A99-4B7C6443150C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
