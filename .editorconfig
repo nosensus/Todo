@@ -8,7 +8,7 @@ charset = utf-8
 # C# configuration - https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/code-style-rule-options
 [*.cs]
 indent_style = tab
-indent_size = 2
+indent_size = 4
 max_line_length = 200
 ###############################
 # C# Formatting Rules         #
@@ -24,3 +24,7 @@ csharp_new_line_between_query_expression_clauses = false
 # Null-checking preferences
 csharp_style_throw_expression = true:suggestion
 csharp_style_conditional_delegate_call = true:suggestion
+
+[*.csproj]
+indent_style = tab
+indent_size = 4
