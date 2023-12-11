@@ -1,4 +1,4 @@
-/Todo/.vs
+.vs
+.idea
 /Todo/*/bin
 /Todo/*/obj
-/Todo/.idea
