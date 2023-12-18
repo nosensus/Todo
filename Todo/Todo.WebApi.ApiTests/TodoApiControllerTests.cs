@@ -25,7 +25,7 @@ public class TodoApiControllerTests {
 	}
 
 	[Test]
-	public void ReturnsTodoItemModelAfterCallsCreate() {
+	public void Create_WhenValidRequest_ReturnsTodoItemModel() {
 		// Arrange
 		AddTodoResponse todoItemResponse = new() {
 			Title = "New Title",
@@ -44,7 +44,7 @@ public class TodoApiControllerTests {
 	}
 
 	[Test]
-	public void ReturnTodoItemsCount() {
+	public void Return_SetuppedTodoItemsCount_ShouldBeOne() {
 		// Act
 		var actionResult = _controller.ListItems();
 		var result = actionResult.Result as OkObjectResult;
@@ -55,7 +55,7 @@ public class TodoApiControllerTests {
 	}
 
 	[Test]
-	public void ReturnsTodoItemTitleThatWasSetInSetup() {
+	public void Return_SetuppedTodoItemTitle_ShouldBeCorrect() {
 		// Act
 		var actionResult = _controller.GetItem(_todoItem!.Id);
 		var result = actionResult.Result as OkObjectResult;
@@ -67,7 +67,7 @@ public class TodoApiControllerTests {
 	}
 
 	[Test]
-	public void ReturnsStatusCode404WhenRecordIsNotInCollection() {
+	public void GetTodoItem_WhenRecordIsNotInCollection_ReturnsStatusCode404() {
 		// Act
 		var actionResult = _controller.GetItem(Guid.Empty);
 		var result = actionResult.Result as NotFoundResult;
@@ -77,7 +77,7 @@ public class TodoApiControllerTests {
 	}
 
 	[Test]
-	public void UpdateTodoItemTitleGetById() {
+	public void Update_TodoItemTitle_ChangedTitleMatch() {
 		// Arrange
 		const string updateTitle = "Update Title";
 		var actionResult = _controller.GetItem(_todoItem!.Id);
@@ -95,7 +95,7 @@ public class TodoApiControllerTests {
 	}
 
 	[Test]
-	public void UpdateTodoItemReturnsBadRequestMessageWhenTodoItemIdIsWrong() {
+	public void Update_WhenIdInModelAndUrlIsNotEqual_ReturnsBadRequestMessage() {
 		// Act
 		var updateActionResult = _controller.UpdateItem(_todoItem!, new Guid());
 		var result = updateActionResult.Result as BadRequestObjectResult;
@@ -105,7 +105,7 @@ public class TodoApiControllerTests {
 	}
 
 	[Test]
-	public void UpdateTodoItemReturnsNotFoundWhenRecordIsNotInCollection() {
+	public void Update_WhenRecordIsNotInCollection_ReturnsNotFound() {
 		// Arange
 		var todoItem = new TodoItem {
 			Id = Guid.Empty,
@@ -122,18 +122,18 @@ public class TodoApiControllerTests {
 	}
 
 	[Test]
-	public void CollectionTodoItemShouldBeNullAfterDeletingRecord() {
+	public void Delete_CollectionTodoItem_ReturnsStatus200() {
 		// Act
 		var actionResult = _controller.DeleteItem(_todoItem!.Id);
 		var result = actionResult.Result as OkObjectResult;
 		var todoItem = result?.Value as TodoItem;
 
 		// Assert
-		todoItem.Should().BeNull();
+		result.StatusCode.Should().Be(StatusCodes.Status200OK);
 	}
 
 	[Test]
-	public void ReturnsNotFoundWhenDeletingRecordIsNotInCollection() {
+	public void Delete_RecordIsNotInCollection_ReturnsNotFound() {
 		// Act
 		var updateActionResult = _controller.DeleteItem(new Guid());
 		var result = updateActionResult.Result as NotFoundResult;
