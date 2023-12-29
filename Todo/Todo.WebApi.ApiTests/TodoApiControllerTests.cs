@@ -36,7 +36,7 @@ public class TodoApiControllerTests {
 	}
 
 	[Test]
-	public void Return_SetuppedTodoItemsCount_NotNull() {
+	public void ListItems_WhenItemsAddedToDatabase_ReturnsItemsFromDatabase() {
 		// Arrange
 		_controller = new TodoApiController();
 		_controller.Create(controllerTodoItemResponse);
@@ -51,7 +51,7 @@ public class TodoApiControllerTests {
 	}
 
 	[Test]
-	public void Return_SetuppedTodoItemTitle_ShouldBeCorrect() {
+	public void GetItem_WhenItemIsAddedToDatabaseWithTitle_ReturnsItemWithTheSameTitle() {
 		// Arrange
 		_controller = new TodoApiController();
 		var controllerActionResult = _controller.Create(controllerTodoItemResponse);
