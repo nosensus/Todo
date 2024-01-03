@@ -25,6 +25,7 @@ public class TodoApiController : ControllerBase {
 			Id = Guid.NewGuid(),
 			Title = addTodoResponse.Title,
 			Description = addTodoResponse.Description,
+			Category = addTodoResponse.Category,
 			CreatedDate = dateNow,
 			UpdatedDate = dateNow
 		};
