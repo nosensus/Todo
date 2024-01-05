@@ -1,3 +1,5 @@
+namespace Todo.WebApi.Models;
+
 public enum Categories {
 	None,
 	Home,

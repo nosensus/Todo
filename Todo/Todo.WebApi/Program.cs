@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen(config => {
 		Version = "v1",
 		Title = "ToDo API",
 		Description = "A simple example ASP.NET Core Web API",
-		TermsOfService = new Uri("https://example.com/terms"),
+		TermsOfService = new Uri("example.com/terms"),
 		Contact = new OpenApiContact
 		{
 			Name = "Aleksandr",

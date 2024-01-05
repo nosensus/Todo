@@ -34,7 +34,7 @@ public class TodoApiController : ControllerBase {
 	}
 
 	/// <summary>
-	/// Get todo items
+	/// Get-TodoItems
 	/// </summary>
 	[HttpGet(Name = "Get todo items")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
@@ -54,7 +54,7 @@ public class TodoApiController : ControllerBase {
 			return BadRequest("Id is empty or not correct");
 		}
 
-		TodoItem item = FakeDb.todoItems.FirstOrDefault(item => item.Id == Id);
+		TodoItem item = FakeDb.todoItems.Find(item => item.Id == Id);
 		if (item == null) {
 			return NotFound();
 		}
@@ -85,7 +85,7 @@ public class TodoApiController : ControllerBase {
 			return BadRequest("id from request Body is not equal Id from URL");
 		}
 
-		TodoItem item = FakeDb.todoItems.FirstOrDefault(item => item.Id == Id);
+		TodoItem item = FakeDb.todoItems.Find(item => item.Id == Id);
 		if (item is null) {
 			return NotFound();
 		}
@@ -114,7 +114,7 @@ public class TodoApiController : ControllerBase {
 			return BadRequest();
 		}
 
-		TodoItem item = FakeDb.todoItems.FirstOrDefault(item => item.Id == Id);
+		TodoItem item = FakeDb.todoItems.Find(item => item.Id == Id);
 		if (item is null) {
 			return NotFound();
 		}

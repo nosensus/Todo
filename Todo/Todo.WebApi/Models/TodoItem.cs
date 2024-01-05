@@ -7,8 +7,8 @@ public class TodoItem {
 	public Guid Id { get; set; }
 	[Required]
 	[MaxLength(30)]
-	public string Title { get; set; }
-	public string Description { get; set; }
+	public required string Title { get; set; }
+	public required string Description { get; set; }
 	public Categories Category { get; set; } = Categories.None;
 	public DateTime DueDate { get; set; }
 	public CardColors CardColor { get; set; } = CardColors.White;
@@ -22,7 +22,7 @@ public class TodoItem {
 public class AddTodoResponse {
 	[Required]
 	[MaxLength(30)]
-	public string Title { get; set; }
-	public string Description { get; set; }
+	public required string Title { get; set; }
+	public required string Description { get; set; }
 	public Categories Category { get; set; }
 }
