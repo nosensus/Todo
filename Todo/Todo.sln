@@ -1,12 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 25.0.1706.3
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo.WebApi", "Todo.WebApi\Todo.WebApi.csproj", "{19F83345-F928-4390-8A99-4B7C6443150C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Todo.WebApi", "Todo.WebApi\Todo.WebApi.csproj", "{19F83345-F928-4390-8A99-4B7C6443150C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo.WebApi.ApiTests", "Todo.WebApi.ApiTests\Todo.WebApi.ApiTests.csproj", "{8E770207-7129-4ED6-9A11-F926FF419827}"
-EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Todo.WebApi.ApiTests", "Todo.WebApi.ApiTests\Todo.WebApi.ApiTests.csproj", "{8E770207-7129-4ED6-9A11-F926FF419827}"
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -13,3 +13,8 @@ Share link in - [Figma](https://www.figma.com/file/114AkxgaDYtkK9bxTiskgM/Untitl
 - dotnet restore
 - dotnet run
 - open in browser <https://localhost:8000/swagger/index.html>
+
+## Run WEB project
+  cd Todo.WebApp
+  npm install
+  npm run dev
