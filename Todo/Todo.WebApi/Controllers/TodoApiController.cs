@@ -97,7 +97,7 @@ public class TodoApiController : ControllerBase {
 		item.DueDate = todo.DueDate;
 		item.CardColor = todo.CardColor;
 		item.IsImportant = todo.IsImportant;
-		item.IsComplete = todo.IsComplete;
+		item.IsCompleted = todo.IsCompleted;
 		return Ok(item);
 	}
 

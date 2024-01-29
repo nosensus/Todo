@@ -13,7 +13,7 @@ public class TodoItem {
 	public DateTime DueDate { get; set; }
 	public CardColors CardColor { get; set; } = CardColors.White;
 	public bool IsImportant { get; set; }
-	public bool IsComplete { get; set; }
+	public bool IsCompleted { get; set; }
 	public DateTime CreatedDate { get; set; }
 	public DateTime UpdatedDate { get; set; }
 }
