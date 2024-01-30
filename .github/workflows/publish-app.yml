@@ -2,41 +2,46 @@ name: publish
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 env:
   AZURE_WEBAPP_NAME: aufgabenliste
-  AZURE_WEBAPP_PACKAGE_PATH: '.' # Set this to the path to your web app project, defaults to the repository root:
-  DOTNET_VERSION: '8.0' # The .NET SDK version to use
+  AZURE_WEBAPP_PACKAGE_PATH: "." # Set this to the path to your web app project, defaults to the repository root:
+  DOTNET_VERSION: "8.0.x" # The .NET SDK version to use
+  ROOT: Todo
 
 jobs:
   publish:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+      - uses: actions/checkout@v4
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Install dependencies
-      run: dotnet restore
-      
-    - name: Build
-      run: |
-        cd DotNet.WebApp
-        dotnet build --configuration Release --no-restore
-        dotnet publish -c Release -o ../dotnet-webapp -r linux-x64 --self-contained true /p:UseAppHost=true
-    - name: Test
-      run: |
-        cd DotNet.WebApp.Tests
-        dotnet test --no-restore --verbosity normal
-      
-    - uses: azure/webapps-deploy@v2
-      name: Deploy
-      with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-        package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/dotnet-webapp'
+      - name: Install dependencies
+        run: dotnet restore
+        working-directory: ${{env.ROOT}}
+
+      - name: Build
+        run: |
+          cd Todo.WebApi
+          dotnet build --configuration Release --no-restore
+          dotnet publish -c Release -o ../Todo -r linux-x64 --self-contained true /p:UseAppHost=true
+        working-directory: ${{env.ROOT}}
+
+      - name: Test
+        run: |
+          cd Todo.WebApi.ApiTests
+          dotnet test --no-restore --verbosity normal
+        working-directory: ${{env.ROOT}}
+
+      - uses: azure/webapps-deploy@v2
+        name: Deploy
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/Todo"
