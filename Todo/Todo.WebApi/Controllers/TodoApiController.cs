@@ -7,7 +7,7 @@ using Todo.WebApi.Models;
 namespace Todo.WebApi.Controllers;
 
 [ApiController]
-[Route("todo")]
+[Route("api/todo")]
 public class TodoApiController : ControllerBase {
 	/// <summary>
 	/// Add new item
