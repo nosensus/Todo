@@ -13,3 +13,6 @@ Share link in - [Figma](https://www.figma.com/file/114AkxgaDYtkK9bxTiskgM/Untitl
 - dotnet restore
 - dotnet run
 - open in browser <https://localhost:8000/swagger/index.html>
+
+## Publish Status ([tutorial](<https://learn.microsoft.com/en-us/dotnet/devops/dotnet-publish-github-action>))
+[![publish](https://github.com/nosensus/Todo/actions/workflows/publish-app.yml/badge.svg)](https://github.com/nosensus/Todo/actions/workflows/publish-app.yml)
