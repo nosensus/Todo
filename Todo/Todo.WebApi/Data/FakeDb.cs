@@ -11,7 +11,21 @@ namespace Todo.WebApi.Data {
 				Description = "New description",
 				Category = Categories.Work,
 				DueDate = DateTime.Now
-			}
+			},
+			new TodoItem {
+				Id = Guid.NewGuid(),
+				Title = "New Title 2",
+				Description = "New description 2",
+				Category = Categories.Home,
+				DueDate = DateTime.Now
+			},
+			new TodoItem {
+				Id = Guid.NewGuid(),
+				Title = "New Title 3",
+				Description = "New description 3",
+				Category = Categories.Work,
+				DueDate = DateTime.Now
+			},
 		};
 	}
 }
