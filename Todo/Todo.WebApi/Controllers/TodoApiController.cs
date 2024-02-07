@@ -26,6 +26,7 @@ public class TodoApiController : ControllerBase {
 			Title = addTodoResponse.Title,
 			Description = addTodoResponse.Description,
 			Category = addTodoResponse.Category,
+			DueDate = addTodoResponse.DueDate,
 			CreatedDate = dateNow,
 			UpdatedDate = dateNow
 		};
