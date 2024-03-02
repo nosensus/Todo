@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Todo.WebApi.Data;
 using Todo.WebApi.Models;
 
@@ -9,31 +10,41 @@ namespace Todo.WebApi.Controllers;
 [ApiController]
 [Route("api/todo")]
 public class TodoApiController : ControllerBase {
+	private TodoDbContext _db;
+
+	public TodoApiController(TodoDbContext db) {
+		_db = db;
+	}
+	
 	/// <summary>
 	/// Add new item
 	/// </summary>
 	[HttpPost(Name = "Add new item")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	public ActionResult<TodoItem> Create([FromBody] AddTodoResponse addTodoResponse) {
+	public async Task<ActionResult<TodoItem>> Create([FromBody] AddTodoResponse addTodoResponse)
+	{
 		if (!ModelState.IsValid) {
 			return BadRequest(ModelState);
 		}
-
-		DateTime dateNow = DateTime.Now;
+		
+		DateTime dateNow = DateTime.UtcNow;
 		TodoItem newTodo = new() {
 			Id = Guid.NewGuid(),
 			Title = addTodoResponse.Title,
 			Description = addTodoResponse.Description,
 			Category = addTodoResponse.Category,
-			DueDate = addTodoResponse.DueDate,
+			DueDate =  addTodoResponse.DueDate,
 			CardColor = addTodoResponse.CardColor,
 			IsImportant = addTodoResponse.IsImportant,
 			IsCompleted = addTodoResponse.IsCompleted,
 			CreatedDate = dateNow,
 			UpdatedDate = dateNow
 		};
-		FakeDb.todoItems.Add(newTodo);
+		
+		_db.TodoList.Add(newTodo);
+		await _db.SaveChangesAsync();
+
 		return Ok(newTodo);
 	}
 
@@ -42,8 +53,8 @@ public class TodoApiController : ControllerBase {
 	/// </summary>
 	[HttpGet(Name = "Get todo items")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	public ActionResult<IEnumerable<TodoItem>> ListItems() {
-		return Ok(FakeDb.todoItems);
+	public async Task<ActionResult<IEnumerable<TodoItem>>> ListItems() {
+		return await _db.TodoList.ToListAsync();
 	}
 
 	/// <summary>
@@ -52,13 +63,13 @@ public class TodoApiController : ControllerBase {
 	[HttpGet("{id:Guid}", Name = "Find item by ID")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	public ActionResult<TodoItem> GetItem(Guid id) {
+	public async Task<ActionResult<TodoItem>> GetItem(Guid id) {
 		Guid Id;
 		if (!Guid.TryParse(id.ToString(), out Id)) {
 			return BadRequest("Id is empty or not correct");
 		}
 
-		TodoItem item = FakeDb.todoItems.Find(item => item.Id == Id);
+		TodoItem item = await _db.TodoList.FirstOrDefaultAsync(item => item.Id == Id);
 		if (item == null) {
 			return NotFound();
 		}
@@ -73,7 +84,7 @@ public class TodoApiController : ControllerBase {
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public ActionResult<TodoItem> UpdateItem(
+	public async Task<ActionResult<TodoItem>> UpdateItem(
 		[FromBody] TodoItem todo,
 		[FromQuery, Required] Guid id) {
 		if (!ModelState.IsValid) {
@@ -89,7 +100,7 @@ public class TodoApiController : ControllerBase {
 			return BadRequest("id from request Body is not equal Id from URL");
 		}
 
-		TodoItem item = FakeDb.todoItems.Find(item => item.Id == Id);
+		TodoItem item = await _db.TodoList.FirstOrDefaultAsync(item => item.Id == Id);
 		if (item is null) {
 			return NotFound();
 		}
@@ -97,11 +108,13 @@ public class TodoApiController : ControllerBase {
 		item.Title = todo.Title;
 		item.Description = todo.Description;
 		item.Category = todo.Category;
-		item.UpdatedDate = DateTime.Now;
+		item.UpdatedDate = DateTime.UtcNow;
 		item.DueDate = todo.DueDate;
 		item.CardColor = todo.CardColor;
 		item.IsImportant = todo.IsImportant;
 		item.IsCompleted = todo.IsCompleted;
+		await _db.SaveChangesAsync();
+		
 		return Ok(item);
 	}
 
@@ -112,18 +125,20 @@ public class TodoApiController : ControllerBase {
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public ActionResult<TodoItem> DeleteItem(Guid id) {
+	public async Task<ActionResult<TodoItem>> DeleteItem(Guid id) {
 		Guid Id;
 		if (!Guid.TryParse(id.ToString(), out Id)) {
 			return BadRequest();
 		}
 
-		TodoItem item = FakeDb.todoItems.Find(item => item.Id == Id);
+		TodoItem item = await _db.TodoList.FirstOrDefaultAsync(item => item.Id == Id);
 		if (item is null) {
 			return NotFound();
 		}
 
-		FakeDb.todoItems.Remove(item);
+		_db.TodoList.Remove(item);
+		await _db.SaveChangesAsync();
+		
 		return Ok();
 	}
 }

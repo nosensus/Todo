@@ -1,9 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Todo.WebApi.Models;
 
 public class TodoItem {
 	[Required]
+	[Key]
+	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 	public Guid Id { get; set; }
 	[Required]
 	[MaxLength(30)]
